@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { connect } from "react-redux";
+import changeText from "./actions";
+import { Field, reduxForm } from "redux-form";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  render() {
+    return (
+      <div>
+        <div>The input text is : {this.props.state.inputText}</div>
+        <form onSubmit={this.props.handleSubmit(this.onSubmit)}>
+          <Field
+            name="textInput"
+            component={this.renderInput}
+            label="Enter Text"
+          />
+          <button>Submit</button>
+        </form>
+      </div>
+    );
+  }
+
+  renderInput = ({ input }) => {
+    return <input {...input} />;
+  };
+
+  onSubmit = formValues => {
+    this.props.changeText(formValues.textInput);
+  };
 }
 
-export default App;
+const mapStateToProps = state => {
+  return { state: state };
+};
+
+const formWrapped = reduxForm({
+  form: "inputForm"
+})(App);
+
+export default connect(mapStateToProps, { changeText })(formWrapped);
